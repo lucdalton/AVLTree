@@ -15,25 +15,27 @@ int main(int argc, const char * argv[]) {
 
         BinaryTree* binaryTree = new BinaryTree();
         binaryTree->Insert(1);
+        binaryTree->Insert(2);
         binaryTree->Insert(3);
+        binaryTree->Insert(4);
         binaryTree->Insert(5);
-
-        binaryTree->Insert(7);
         binaryTree->Insert(6);
-        binaryTree->Insert(8);
+        binaryTree->Insert(7);
+        binaryTree->PrintTree();
+        std::cout << "\n";
+        binaryTree->Remove(6);
+        binaryTree->Remove(7);
+        binaryTree->Remove(4);
+    
+        binaryTree->PrintTree();
+        std::cout << "\n";
+    
+        binaryTree->Insert(6);
+        binaryTree->Insert(7);
+        binaryTree->Insert(4);
 
-    binaryTree->Insert(19);
-    binaryTree->Insert(18);
-    binaryTree->Insert(100);
-    binaryTree->Insert(91);
-    binaryTree->Insert(62);
-    binaryTree->Insert(85);
-    binaryTree->Insert(76);
-    binaryTree->Insert(61);
-    binaryTree->Insert(888);
-    binaryTree->Insert(37);
-    binaryTree->Insert(68);
-    binaryTree->Insert(78);
+        binaryTree->PrintTree();
+        std::cout << "\n";
         /*
         binaryTree->Insert(1);
         
@@ -44,7 +46,7 @@ int main(int argc, const char * argv[]) {
         binaryTree->Insert(120);
         binaryTree->Insert(40);
          */
-        binaryTree->PrintTree();
+        //binaryTree->PrintTree();
         std::cout << "";
         
         

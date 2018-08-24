@@ -17,9 +17,6 @@ typedef struct node{
     int key;
     node* left;
     node* right;
-    
-    //int lweight;
-    //int rweight;
     int height;
 }node;
 
@@ -37,7 +34,6 @@ public:
     void PrintTree();
     
 private:
-    //void Insert(int key, node* n);
     node* Insert(int key, node* n);
     node* Remove(int key, node* n);
     node* root;

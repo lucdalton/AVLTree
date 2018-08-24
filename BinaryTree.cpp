@@ -1,15 +1,11 @@
-//
 //  BinaryTree.cpp
 //  AVLTree
 //
 //  Created by Luc on 16/08/2018.
 //  Copyright © 2018 Luc. All rights reserved.
-//
 
 #include "BinaryTree.hpp"
-
 #include <iostream>
-//#include <cmath>
 
 #define REBALANCE_HEIGHT 2
 
@@ -20,33 +16,6 @@ node* NewNode(){
     n->height = 0;
     return n;
 }
-
-/*
- void BinaryTree::Insert(int key, node* n){
- if(key < n->key){
- if(n->left != nullptr)
- {
- n->lweight++;
- Insert(key, n->left);
- }
- else{
- // reached the end of the tree branch
- n->left = NewNode();
- n->left->key = key;
- }
- }else if(key > n->key){
- if(n->right != nullptr){
- n->rweight++;
- Insert(key, n->right);
- }else{
- // reached end of tree branch
- n->right = NewNode();
- n->right->key = key;
- }
- }
- 
- }
- */
 
 void BinaryTree::Insert(int key){
     
@@ -64,13 +33,19 @@ int height(node* n){
     return (n==nullptr ? -1 : n->height);
 }
 
+/*
 int maxHeight(node* n, node* p){
-    
     return (height(n) > height(p) ? height(n) : height(p));
 }
-
+*/
+ 
 int max(int a, int b){
     return (a > b ? a : b);
+}
+
+int maxHeight(node* n, node* p){
+    //return (height(n) > height(p) ? height(n) : height(p));
+    return max(height(n), height(p));
 }
 
 node* shiftLeft(node* n){
@@ -130,6 +105,86 @@ node* shiftRight_v(node* n){
     return shiftRight(n);
 }
 
+node* minNode(node* n){
+    // find the smallest node from a tree root n
+    if(n == nullptr)
+        return nullptr;
+    else if(n->left == nullptr)
+        return n;
+    else
+        return minNode(n->left);
+}
+
+void BinaryTree::Remove(int key){
+    root = Remove(key, root);
+}
+
+node* BinaryTree::Remove(int key, node* n){
+    
+    node* temp;
+    
+    if(n==nullptr)
+        return nullptr;
+    
+    if(key < n->key){
+        n->left = Remove(key, n->left);
+    }
+    else if(key > n->key){
+        n->right = Remove(key, n->right);
+    }
+    // when control reaches here we have arrived at the node to remove
+    else if(n->right && n->left){
+        
+        // node has 2 children
+        temp = minNode(n->right);
+        n->key = temp->key;
+        n->right = Remove(n->key, n->right);
+        
+        
+    }else{
+       
+        // node has 1 or 0 children
+        temp = n;
+        if(n->left==nullptr){
+            n = n->right;
+        }else if(n->right==nullptr){
+            n = n->left;
+        }else{
+            return nullptr;
+        }
+        delete temp;
+    }
+    
+    if(n==nullptr)
+        return n;
+    
+    n->height = max(height(n->left), height(n->right))+1;
+    //n->height = maxHeight(n->left, n->right)+1;
+
+    // check node balancing
+    if(height(n->left) - height(n->right) == REBALANCE_HEIGHT)
+    {
+        // left left case
+        if(height(n->left->left) - height(n->left->right) == REBALANCE_HEIGHT-1)
+            return shiftLeft(n);
+        // left right case
+        else
+            return shiftLeft_v(n);
+    }
+    // If right node is deleted, left case
+    else if(height(n->right) - height(n->left) == REBALANCE_HEIGHT)
+    {
+        // right right case
+        if(height(n->right->right) - height(n->right->left) == REBALANCE_HEIGHT-1)
+            return shiftRight(n);
+        // right left case
+        else
+            return shiftRight_v(n);
+    }
+    return n;
+}
+
+
 node* BinaryTree::Insert(int key, node* n){
 
     if(n==nullptr){
@@ -140,7 +195,6 @@ node* BinaryTree::Insert(int key, node* n){
         
         n->left = Insert(key, n->left);
         if(height(n->left) - height(n->right) == REBALANCE_HEIGHT){
-            // rebalance
             if(key < n->left->key){
                 n = shiftLeft(n);
             }else{
@@ -162,152 +216,20 @@ node* BinaryTree::Insert(int key, node* n){
     }
     n->height = maxHeight(n->left, n->right) + 1;
     return n;
-
-    /*
-     node** p;
-     if(key < n->key)
-        p = &(n->left);
-     else
-        p = &(n->right);
-     
-     (*p) = Insert(key, *p);
-     if(abs(height(n->right) - height(n->left)) == REBALANCE_HEIGHT){
-     
-     }
-     */
     
-    
-/*
-    /// without repeating code
-     node** k;
-     if(key < n->key)
-         k = &(n->left);
-     else
-         k = &(n->right);
-     if(*k==nullptr){
-         *k = NewNode();
-         (*k)->key = key;
-         (*k)->height = ++height;
-     }else{
-         Insert(key, *k, ++height);
-     }
- */
 }
 
-/*
-void Shift_0(node* n, node* parent){
-    // case 0
-    if(parent->left!=nullptr){
-        if(parent->left->key == n->key){
-            // node is on the left
-            parent->left = n->left;
-            n->left->right = n;
-            n->left = nullptr;
-        }
-    }
-    else{
-        // node is on the right
-        parent->right = n->left;
-        n->left->right = n;
-        n->left = nullptr;
-        
-    }
-}
-
-void Shift_1(node* n, node* parent){
-    // case 1
-    if(parent->left!=nullptr){
-        if(parent->left->key == n->key){
-            // node is on the left
-            parent->left = n->left->right;
-            n->left->right->right = n;
-            n->left->right->left = n->left;
-            
-            n->left->right = nullptr;
-            n->left = nullptr;
-            n->right = nullptr;
-            
-        }
-    }
-    else{
-        // node is on the right
-        parent->right = n->left->right;
-        n->left->right->right = n;
-        n->left->right->left = n->left;
-        
-        n->left->right = nullptr;
-        n->left = nullptr;
-        n->right = nullptr;
-    }
-}
- */
-/*
-void BinaryTree::Shift(node* n, node* parent){
-      n            1
-     / \            \
-    2   5             5        5        3
-       /            /         \         \
-      4               3          7          4
-     /                \         /           \
-    3                 4        6            5
-     case 0         case 1      case2     case3
- 
-    int first = 0;
-    int second = 0;
-    
-    int p = 0;
-    
-    if(parent->left->key == n->key){
-        // node is on the left
-        p=0;
-    }else{
-        // node is on the right
-        p=1;
-    }
-    
-    
-    if(n->left != nullptr){
-        if(n->left->left != nullptr){
-            // case 0
- 
-             if(p==0){
-             parent->left = n->left;
-             n->left->right = n;
-             n->left = nullptr;
-             }else{
-             parent->right = n->left;
-             n->left->right = n;
-             n->left = nullptr;
-             }
- 
-            Shift_0(n, parent);
-        }else{
-            // case 1
-            if(p==0){
-                parent->left = n->left->right;
-                
-            }
-        }
-    }else{
-        if(n->right->left != nullptr){
-            // case 2
-        }else{
-            // case 3
-        }
-    }
-}
- */
 
 void PrintNode(node* n){
     std::cout << "key: " << n->key << " height: " << n->height;
-    if(n->left!=nullptr){
+    if(n->left){
         std::cout << " :left " << n->left->key;
     }
     else{
         std::cout << " :left null";
     }
     
-    if(n->right!=nullptr){
+    if(n->right){
         std::cout << " right: " << n->right->key;
     }
     else{
@@ -324,62 +246,9 @@ void BinaryTree::PrintTree(node* n){
         PrintTree(n->left);
     if(n->right!=nullptr)
         PrintTree(n->right);
-
+    
 }
 
 void BinaryTree::PrintTree(){
     PrintTree(root);
 }
-
-
-/*
-int main(){
-    
-    BinaryTree* binaryTree = new BinaryTree();
-    binaryTree->Insert(2);
-    binaryTree->Insert(3);
-    binaryTree->Insert(1);
-    binaryTree->Insert(5);
-    binaryTree->Insert(10);
-    
-    binaryTree->PrintTree();
-    
-
-     node* n1 = NewNode();
-     node* n2 = NewNode();
-     node* n3 = NewNode();
-     node* n4 = NewNode();
-     
-     n1->key = 1;
-     n2->key = 5;
-     n3->key = 4;
-     n4->key = 3;
-     
-     n1->right = n2;
-     n2->left = n3;
-     n3->left = n4;
-     
-     //std::cout << n1->key << " :left " << n1->left->key << " right: " << n1->right->key; //<< "\n";
-     
-     PrintNode(n1);
-     PrintNode(n2);
-     PrintNode(n3);
-     PrintNode(n4);
-     
-     Shift_0(n2, n1);
-     
-     std::cout << "\n";
-     
-     
-     
-     PrintNode(n1);
-     PrintNode(n2);
-     PrintNode(n3);
-     PrintNode(n4);
-     
- 
-    
-    
-    return 0;
-}
-*/
