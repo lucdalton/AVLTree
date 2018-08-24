@@ -33,18 +33,11 @@ int height(node* n){
     return (n==nullptr ? -1 : n->height);
 }
 
-/*
-int maxHeight(node* n, node* p){
-    return (height(n) > height(p) ? height(n) : height(p));
-}
-*/
- 
 int max(int a, int b){
     return (a > b ? a : b);
 }
 
 int maxHeight(node* n, node* p){
-    //return (height(n) > height(p) ? height(n) : height(p));
     return max(height(n), height(p));
 }
 
@@ -140,7 +133,6 @@ node* BinaryTree::Remove(int key, node* n){
         n->key = temp->key;
         n->right = Remove(n->key, n->right);
         
-        
     }else{
        
         // node has 1 or 0 children
@@ -158,8 +150,8 @@ node* BinaryTree::Remove(int key, node* n){
     if(n==nullptr)
         return n;
     
-    n->height = max(height(n->left), height(n->right))+1;
-    //n->height = maxHeight(n->left, n->right)+1;
+    //n->height = max(height(n->left), height(n->right))+1;
+    n->height = maxHeight(n->left, n->right)+1;
 
     // check node balancing
     if(height(n->left) - height(n->right) == REBALANCE_HEIGHT)
@@ -217,6 +209,14 @@ node* BinaryTree::Insert(int key, node* n){
     n->height = maxHeight(n->left, n->right) + 1;
     return n;
     
+}
+
+void BinaryTree::DeleteNode(node* n){
+    if(n->left)
+        DeleteNode(n->left);
+    if(n->right)
+        DeleteNode(n->right);
+    delete n;
 }
 
 

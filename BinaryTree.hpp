@@ -25,7 +25,9 @@ public:
     BinaryTree(){
         root = nullptr;
     };
-    ~BinaryTree();
+    ~BinaryTree(){
+        DeleteNode(root);
+    }
     
     void Insert(int key);
     node* Search(int key);
@@ -38,6 +40,7 @@ private:
     node* Remove(int key, node* n);
     node* root;
     
+    void DeleteNode(node*);
     void PrintTree(node*);
         
 };
